@@ -125,7 +125,48 @@ por un ser humano, sino de ser editables.
   como al traer gente nueva a un proyecto, puede tomar tiempo que los nuevos
   trabajadores se adapten a los **DSL** que en este son usados.
 
+## Ventajas de un **modelo semantico**:
+
+- Permite pensar en la semantica del modelo sin estar pensando simultaneamente
+  en la sintaxis del **DSL**, esto es significativo dado que normalmente
+  implementamos un **DSL** para representar situaciones bastante complejas.
+- Permite testear de manera separada el _modelo_ y el _dsl_.
+- Es posible tener multiples _dsl_ que utilizen el mismo modelo (incluyendo
+  externos e internos).
+- Es posible anhadir funcionalidad al _dsl_ y al _modelo_ de manera
+  independiente
+- Dado que pensamos en el **DSL** como una mera interfaz al modelo semantico,
+  esta separacion podria asemejarse a la separacion entre logica y
+  visualizacion en cualquier otra aplicacion.
+
+## Implementando un DSL
+
+### Arquitectura de un DSL:
+
+- Externo: scripts -> parser -> model -> code generation (opcional)
+
+- Interno: scripts -> expression builders -> model -> code generation (opcional)
+
+Muchas veces no es necesaria la generacion de codigo. Los casos fundamentales
+donde necesitamos generacion de codigo, es cuando se necesita por algun
+motivo ejecutar el programa en un entorno diferente al del lenguaje
+_hospedero_. Un ejemplo de esto es **LINQ** que genera codigo **SQL** que es
+ejecutado en el entorno de un gestor de bases de datos.
+
+### Parser
+
+Si estamos usando un _DSL externo_ y parseamos texto, obtendremos como
+sabemos un _AST_, la idea es convertir este _AST_ a nuestro
+**Semantic Model**, a pesar de que pudiera ejecutarse sobre el propio
+**AST**, esto complejizaria la situacion, dado que crearia una atadura muy
+grande entre la sintaxis del _DSL_ y la capacidad de procesamiento del mismo.
+En un _DSL interno_ la jerarquia del _AST_ la darian los llamados a funciones (_Nested Functions_) y los objetos anidados (_Method Chaining_). Algunas veces no es posible ver una jerarquia explicita y es necesario simularla (_Funciton Sequence_ y _Context Variables_)
+
+## Implementando un DSL interno
+
 ## TODO
 
-- Important: Semantic Model == AST ???
-- Ver: Implementing DSL parser workings
+- Semantic Model == AST ???  
+  Ver: 3.2
+- Expression Builders como capa que provee fluent api en **DSL interno**  
+  Ver: 32
