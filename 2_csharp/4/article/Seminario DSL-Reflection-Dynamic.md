@@ -52,6 +52,7 @@ expresiva de expresar lo anterior.
 class StateMachine
 {
     private List<Transition> transitions;
+    private Transition newTransition;
 
     public StateMachine()
     {
@@ -61,9 +62,9 @@ class StateMachine
 
     public Transition Transition()
     {
-        newTransition = new Transition();
-        this.Transitions.Add(newTransition);
-        return newTransition;
+        this.newTransition = new Transition();
+        this.Transitions.Add(this.newTransition);
+        return this.newTransition;
     }
 }
 
@@ -75,13 +76,13 @@ class Transition
     public Transition From(string origin)
     {
         this.Origin = origin;
-        return This;
+        return this;
     }
 
     public Transition To(string dest)
     {
         this.Dest = dest;
-        return This;
+        return this;
     }
 }
 ```
@@ -392,12 +393,12 @@ Como anteriormente se puede observar en principio lograr un comportamieto dinám
 
 Proporciona implementación para operaciones binarias. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones como la suma, multiplicación, etc. La clase BinaryOperationBinder
 contiene una ExpressionType con información de la operación en se realiza al momento de llamado de esta función. Este metodo considera que la instancia de la clase derivada de DynamicObject es el operador de la derecha y arg es el de la izq.
-  
- public virtual bool TryConvert(ConvertBinder binder, out object result)
+
+public virtual bool TryConvert(ConvertBinder binder, out object result)
 
 Proporciona implementación para operaciones de conversión de tipos. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico de las operaciones que convierten un objeto de un tipo a otro. La clase ConvertBinder contiene información sobre del tipo al cual se esta tratando de hacer la converción e incluso contiene informacion sobre si el proceso es explícito o implícito
-  
- public virtual bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+
+public virtual bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
 public virtual bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
 
 Proporciona la implementación para operaciones que obtienen(establecen) valores de miembros por índices. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones tales como obtener (acceden) un valor para una propiedad mediante unos índices específico.
