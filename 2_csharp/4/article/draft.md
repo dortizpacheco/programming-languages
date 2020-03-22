@@ -160,13 +160,40 @@ sabemos un _AST_, la idea es convertir este _AST_ a nuestro
 **Semantic Model**, a pesar de que pudiera ejecutarse sobre el propio
 **AST**, esto complejizaria la situacion, dado que crearia una atadura muy
 grande entre la sintaxis del _DSL_ y la capacidad de procesamiento del mismo.
-En un _DSL interno_ la jerarquia del _AST_ la darian los llamados a funciones (_Nested Functions_) y los objetos anidados (_Method Chaining_). Algunas veces no es posible ver una jerarquia explicita y es necesario simularla (_Funciton Sequence_ y _Context Variables_)
+En un _DSL interno_ la jerarquia del _AST_ la darian los llamados a funciones
+(_Nested Functions_) y los objetos anidados (_Method Chaining_). Algunas veces
+no es posible ver una jerarquia explicita y es necesario simularla
+(_Funciton Sequence_ y _Context Variables_).
 
 ## Implementando un DSL interno
 
+_Method Chaining_ es una manera de lograr que el codigo luzca fluido, sin uso de
+variables, lo que simula ser otro lenguaje.
+
+_Expression Builders_ es la manera de separar la api fluent del modelo semantico,
+los _Expression Builders_ son los encargados de proveer la api fluent (el lenguaje),
+mienntras que el modelo semantico sigue una api de _command-query_ regular. Los
+_Expression Builders_ construyen el modelo semantico.
+
+Es posible usar _Function Sequence_ en vez de _Method Chaining_, pero esto implicaria
+encontrar una manera de que se resuelvan bien las funciones a las que se deben invocar.
+Esto puede conllevar a mantener las funciones globales, y las _Context Variables_ globales
+tambien, lo cual es facil ver que es un problema. Utilizar _Object Scoping_ es una manera de
+resolver este problema, basicamente lo que se hace es colocar el codigo (script) del **DSL**
+en una clase heredera de un _Expression Builder_ esto asegura que se resuelvan los metodos
+correctamente, logrando el efecto de globalidad requerido, sin necesariamente hacer las funciones
+globales
+
 ## TODO
 
-- Semantic Model == AST ???  
-  Ver: 3.2
 - Expression Builders como capa que provee fluent api en **DSL interno**  
   Ver: 32
+
+- Macro
+  Ver: 15
+
+* Construction Builder
+  Ver: 14
+
+- Context Variable
+  Ver: 13
