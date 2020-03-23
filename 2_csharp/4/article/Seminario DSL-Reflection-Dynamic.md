@@ -2,6 +2,8 @@
 
 ## Lenguajes de Dominio Específico (DSL)
 
+<!-- TODOÑ Cambiar los ejemplos a DSL de Persona -->
+
 Supongamos la siguiente situación. Se quiere implementar un mecanismo
 para crear maquinas de estado. A estas maquinas de estado debe ser
 posible añadirles transiciones, entre estados, los cuales, seran
@@ -545,3 +547,7 @@ asignando como valor. Y en el momento en que se hace referencia a una propiedad
 busca si el nombre de dicha propiedad se encuentra entre las llaves, en caso
 afirmativo se devuelve el valor correspondiente, de lo contrario se lanza un
 excepción.
+
+## Reflection
+
+<!-- TODO: Añandir una pequeña explicacion de Reflection en CSharp -->
