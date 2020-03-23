@@ -49,9 +49,16 @@ namespace CSharp.DynamicReflectionDSL
         public override string ToString()
         {
             var result = "{\n";
+            result += "  <Person>\n";
             foreach (var item in this.fields)
-                result += string.Format("  {0}: {1}\n", item.Key, item.Value);
-            return result + "}\n";
+                result += string.Format(
+                    "  {0}: {1}\n",
+                    item.Key,
+                    item.Value
+                    .ToString()
+                    .Replace("\n", "\n  ")
+                );
+            return result + "}";
         }
     }
 }

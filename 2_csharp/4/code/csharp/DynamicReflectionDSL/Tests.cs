@@ -45,7 +45,14 @@ namespace CSharp.DynamicReflectionDSL
 
         public static void TestJsonSyntax()
         {
-            var person = Factory.New.Person(FirstName: "Louis", LastName: "Dejardin");
+            var person = Factory.New.Person(
+                FirstName: "Louis",
+                LastName: "Dejardin",
+                Manager: Factory.New.Person(
+                    FirstName: "Bertrand",
+                    LastName: "Le Roy"
+                )
+            );
 
             Console.WriteLine(person);
         }
