@@ -273,7 +273,37 @@ fundamental los _Expression Builders_, basicamente tendremos una capa en nuestro
 modelo que proveerá el lenguaje y construir de la manera debida la instancia del
 modelo que provee la funcionalidad.
 
-<!-- TODO: Ejemplo de Expression Builder -->
+Un ejemplo de _ExpressionBuilder_ para `Person` quedaria de la siguiente manera:
+
+```csharp
+class PersonBuilder
+{
+  private Person currentPerson = null;
+
+  public PersonBuilder Build()
+  {
+    this.currentPerson = new Person();
+    return this;
+  }
+
+  public PersonBuilder FirstName(string name)
+  {
+    this.FirstName = name;
+    return this;
+  }
+
+  public PersonBuilder LastName(string name)
+  {
+    this.LastName = name;
+    return this;
+  }
+
+  public Person End()
+  {
+    return this.currentPerson;
+  }
+}
+```
 
 ### Fluent Interface
 
