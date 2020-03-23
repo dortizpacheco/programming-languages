@@ -558,14 +558,7 @@ int main() {
 }
 ```
 
-<!-- TODO:
-- Hablar de LINQ:
-  incluir generacion de código
-- Hablar de C++ con las macros
-- Poner ejemplos de Ruby y Lisp:
-  Hablar de que características
-  de estos lenguajes favorecen
-  la creación de DSLs internos -->
+<!-- TODO: Ruby -->
 
 ## Dynamic
 
