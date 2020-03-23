@@ -405,7 +405,8 @@ argumento; de lo contrario, se evalúa al tercer argumento. Así, la expresión
     (list 3 4 "bar"))
 ```
 
-Lisp también proporciona operadores lógicos. Los operadores **and** y **or** realizan una evaluación de cortocircuito y devolverán su primer argumento nil y non-nil respectivamente.
+Lisp también proporciona operadores lógicos. Los operadores **and** y **or** realizan
+una evaluación de cortocircuito y devolverán su primer argumento nil y non-nil respectivamente.
 
 ```lisp
   (or (and "zero" nil "never") "James" 'task 'time)
