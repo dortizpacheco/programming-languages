@@ -2,7 +2,7 @@
 
 ## Lenguajes de Dominio Específico (DSL)
 
-<!-- TODOÑ Cambiar los ejemplos a DSL de Persona -->
+<!-- TODO: Cambiar los ejemplos a DSL de Persona -->
 
 Supongamos la siguiente situación. Se quiere implementar un mecanismo
 para crear maquinas de estado. A estas maquinas de estado debe ser
