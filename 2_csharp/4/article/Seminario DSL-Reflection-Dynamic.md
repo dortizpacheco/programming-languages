@@ -103,8 +103,6 @@ concatenada que mantienen estrecha relación entre sí, se les llama _Fluent API
 que permiten una manera fluida de escribir el código, dando la sensación de ser un
 lenguaje diferente.
 
-<!-- TODO: Hablar mas de Fluent Api, maneras de implementarla (metodos extensores, etc.) -->
-
 > Un **_DSL_** es un lenguaje de programacion de expresividad limitada, enfocado a un
 > dominio especifico.
 
@@ -277,6 +275,37 @@ modelo que provee la funcionalidad.
 
 <!-- TODO: Ejemplo de Expression Builder -->
 
+### Fluent Interface
+
+Las interfaces fluidas o encadenamiento de metodos son muy utilizadas en la creación
+de _DSLs_, dobre todo en lenguajes con sintaxis poco flexible, se utilizan para dar
+una sensacion de estar escribiendo en otro lenguaje, con mas fluidez, evitando el
+uso de variables y ganando en expresividad.
+
+Hay varias maneras de poner en practica este concepto. Los metodos que seran
+encadenados al llamarlos pueden ser implementados a partir de metodos extensores
+en un lenguaje como _C#_, esto permite la separación una vez mas del lenguaje y el
+modelo.
+
+Los _ExpressionBuilders_ vistos anteriormente son un lugar muy común donde
+implementar esta interfaz, dado que como se explica anteriormente estos son los
+encargados de la capa del lenguaje. La implementacion de este tipo de interfaces
+fluidas en los _ExpressionBuilders_ trae algunos problemas, como por ejemplo el
+problema de la terminación. Este problema consiste en que dado que cada metodo
+retorna la propia instancia del _ExpressionBuilder_ entonces puede ser complicado
+decidir cuando se ha terminado la cadena de metodos y en este caso retornar la
+instancia que se quiere construir. Este problema se puede resolver añadiendo un
+metodo `End()` al builder, que al ser llamado retornara la instancia construida
+hasta el momento; este enfoque puede parecer un poco _verbose_. Otra forma puede
+ser en lenguajes como _C#_ establecer un casteo implicito entre un builder y el tipo
+de objetos que este construye.
+
+Otro enfoque para la implementación de interfaces fluidas son las
+_progressive interfaces_. Esta idea consiste en que cada metodo en la fluent
+interface retorna que implementa un interface de solo un metodo, de manera tal que
+el orden en que pueden encadenarse los metodos es determinado por el creador del
+_DSL_.
+
 ### Ventajas y Desventajas de los DSL:
 
 **Un _DSL_ tiene, entre otras, las siguientes ventajas:**
@@ -335,14 +364,21 @@ incrustar en otras expresiones. Cada valor puede ser cualquier tipo de datos.
 
 El uso de paréntesis es la diferencia más obvia de Lisp de otras familias de
 lenguaje de programación y un rasgo que en ocaciones resulta incómodo. Pero, la
-sintaxis de la expresión _S_ también es responsable de gran parte del poder de Lisp:
-la sintaxis es extremadamente regular, lo que facilita la manipulación por
+sintaxis de las expresiones _S_ también es responsable de gran parte del poder de
+Lisp: la sintaxis es extremadamente regular, lo que facilita la manipulación por
 computadora.
 
 Las funciones de Lisp se escriben como listas, se pueden procesar exactamente como
 los datos. Esto permite escribir fácilmente programas que manipulan otros programas
 (metaprogramación). Muchos dialectos de Lisp explotan esta característica utilizando
 sistemas macro, que permiten la extensión del lenguaje casi sin límite.
+
+#### Expresiones _S_:
+
+Una _expresión s_, también conocida como _sexpr_ o _sexp_ , es una forma de
+representar una lista anidada de datos . Significa "_expresión simbólica_".Por
+ejemplo, la expresión matemática simple `5*(7+3)` se puede escribir como una
+_expresión s_ con notación de prefijo de la forma `(* 5 (+ 7 3))`.
 
 #### Listas
 
@@ -534,6 +570,161 @@ Ahora podemos ejecutar en la línea de comando:
 
 De esta manera es posible lograr casi cualquier sintaxis que se pueda desear.
 
+### Ruby
+
+_Ruby_ es un lenguaje orientado a objetos y sigue la noción habitual de cualquier
+otro lenguaje orientado a objetos para definir una clase, _Ruby_ tiene su propio
+modelo de objetos el cual tiene artefactos como clases, objetos, métodos de
+instancia, métodos de clase y métodos singleton; posee soporte para expresiones
+regulares, lo cual es muy útil en la coincidencia de patrones y procesamiento de
+texto y se pueden implementar bloques, los cuales se utilizan para implementar
+lambdas y cierres en _Ruby_.
+
+Sin embargo, quizás la característica más apreciada de _Ruby_ es la
+metaprogramación, con la cual se puede manipular el lenguaje para satisfacer las
+necesidades, en lugar de adaptarse al lenguaje cómo es, es por ello que la
+metaprogramación y los DSLs tienen una estrecha relación en el mundo _Ruby_. _Ruby_
+es un lenguaje altamente dinámico; puede insertar nuevos métodos en las clases en
+tiempo de ejecución (incluso una clase principal como Array), crear alias para los
+métodos existentes, e incluso definir métodos en objetos individuales (métodos
+Singleton). Además, tiene una rica API para la _reflection_. Un programa de _Ruby_
+puede configurar dinámicamente nombres de variables, invocar nombres de métodos e
+incluso definir nuevas clases y nuevos métodos.
+
+#### Caracteristicas distintivas del lenguaje Ruby
+
+La sintaxis de _Ruby_ esta orientada a la expresividad y su unidad básica es la
+expresión, el intérprete de _Ruby_ evalúa las expresiones y produce valores. Las
+expresiones más simples son las expresiones primarias, las cuales representan
+directamente los valores, ejemplo de esto son los números y las cadenas. El lenguaje
+tiene muchas similitudes con _Python_, aunque con diferencia en pequeños detalles.
+Mientras que _Python_ intenta a la vez ser lo mas legible y sencillo posible, _Ruby_
+intenta ser lo mas explesivo posible dentro de la sencillez y el tipado dinámico.
+Luego siguiendo esa idea los _scope_ en _Ruby_ estan delimitados por las palabras
+predefinidas del lenguage (`if`, `def`, etc.) y la palabra clave `end`. A
+continuacion se enumeraran algunas diferencias.
+
+1. En _Ruby_ Las estructuras de control son expresiones y por tanto, se puede
+   escribir código como el siguiente:
+
+```ruby
+    min = if x < t then x else t end
+```
+
+2. En _Ruby_ tienes una referencia a la clase (`self`) que ya está en el cuerpo de
+   la clase. En Python, no tiene una referencia a la clase hasta que finaliza la
+   construcción de la clase.
+
+```ruby
+class RubyClass
+  puts self
+end
+```
+
+`self` en este caso es la clase, y este código imprimirá "RubyClass". No hay forma
+de imprimir el nombre de la clase o de otra manera acceder a la clase desde el
+cuerpo de definición de clase en Python (definiciones de método externas).
+
+3. En Ruby para referirse a una propiedad de una clase se realiza a partir del `@` en lugar de `self.property`.
+
+```ruby
+  class MyRubyClass
+    def initialize(text)
+      @text = text
+    end
+    def welcome
+      @text
+    end
+  end
+```
+
+4. Todas las clases son mutables en Ruby.
+   Esto le permite desarrollar extensiones para las clases principales:
+
+```ruby
+    class String
+      def starts_with?(other)
+        head = self[0, other.length]
+        head == other
+      end
+    end
+```
+
+5. Ruby tiene bloques
+   Con la instrucción `do`, puede crear una función anónima de varias líneas en
+   Ruby, que se pasará como un argumento al método frente a `do`, y se llamará desde
+   allí. En Python, en su lugar, haría esto ya sea pasando un método o con
+   generadores.
+
+```ruby
+def themethod
+  yield 5
+end
+
+themethod do |foo|
+  puts foo
+end
+```
+
+6. En Ruby, cuando se importa un archivo con **require**, todas las cosas definidas
+   en ese archivo terminarán en su espacio de nombres global. Esto causa la
+   contaminación del espacio de nombres. La solución a eso son los módulos Rubys. Pero
+   si crea un espacio de nombres con un módulo, debe usar ese espacio de nombres para
+   acceder a las clases contenidas.
+
+7. Ruby no tiene herencia multipli, sino que reutiliza el concepto de módulo como un
+   tipo de clases abstractas.
+
+8. Ruby simula las _list comprehensions_ de _Python_ de la siguiente manera:
+
+```ruby
+res = (0..9).map { |x| x * x }
+```
+
+#### Ruby y los DSL
+
+En los lenguajes compilados como _C++_ los métodos y variables tienen valor en un
+espacio de memoria solo en tiempo de compilación, una vez finaliza el período de
+compilación los espacios de memoria se liberan y se pierde la información
+relacionada con el programa, por esa razón no se pueden solicitar a una clase sus
+métodos de instancia, ya que, en el momento de hacer la solicitud, la clase se ha
+desvanecido. Por otra parte, en los lenguajes interpretados como Ruby la
+metaprogramación es posible, ya que en tiempo de ejecución la mayoría de las
+construcciones del lenguaje todavía están ahí, de esa forma, se pueden consultar
+valores y construcciones del programa en ejecución.
+
+Para la metaprogramacion _Ruby_ se vale de las clases `Kernel`, `Object` y `Module`
+que definen métodos con el mismo objetivo que `System.Reflection` en _C#_, trabajar
+con los metadatos del programa en ejecución. Pero gracias al tipado dinámico de Ruby
+y que sus tipos principales no son inmutables, este trabajo con los metadatos del
+programa aporta una gran flexibilidad al lenguaje. A continuación algunos ejemplos:
+
+```ruby
+    def array_second
+      self[1]
+    end
+    a = [1,2,3]
+    a.instance_eval(array_second)
+    a.second #returns: 2
+```
+
+```ruby
+  str = "ruby.devcoop.fr"
+  str.instance_eval do
+    def /(delimiter)
+      split(delimiter)
+    end
+  end
+  str / "." # return: ["ruby" , "devcoop", "fr"]
+```
+
+Otra forma de realizar esto es mediante los metodos `add_method`, `remove_method` y
+`undef_method`. Otro método útil para manipular métodos es el `alias_method` o
+simplemente `alias`, mediante estos métodos es posible darle sinónimos a un método
+existente, funciona como un diccionario en el cual un método puede tener diferentes
+nombres. Por otra parte, si se llama a un método no existente, se puede usar
+`method_missing` para capturar y manejar invocaciones arbitrarias en un objeto.
+
 ### Ejemplo C++
 
 En _C++_ es posible lograr una sintaxis de tipo _DSL_ a partir de la
@@ -558,8 +749,6 @@ int main() {
     return 0;
 }
 ```
-
-<!-- TODO: Ruby -->
 
 ## Dynamic
 
@@ -590,22 +779,14 @@ Para entender que es el **_DLR_** debemos entender primero que es el **_CLR_**.
 El _Common Language Runtime_ o _CLR_ es un entorno de ejecución para los códigos de
 los programas que corren sobre la plataforma _Microsoft .NET_. El _CLR_ es el
 encargado de compilar una forma de código intermedio (el conocido _IL_) a código de
-maquina nativo, mediante un compilador en tiempo de ejecución. No debe confundirse
-el _CLR_ con una máquina virtual, ya que una vez que el código está compilado, corre
-nativamente sin intervención de una capa de abstracción sobre el hardware subyacente.
-
-La manera en que la máquina virtual se relaciona con el _CLR_ permite a los
-programadores ignorar muchos detalles específicos del microprocesador que estará
-ejecutando el programa. El _CLR_ también permite otros servicios importantes,
-incluyendo los siguientes:
+maquina nativo, mediante un compilador en tiempo de ejecución. El _CLR_ también
+permite otros servicios importantes, incluyendo los siguientes:
 
 - Administración de la memoria
 - Administración de hilos
 - Manejo de excepciones
 - Recolección de basura
 - Seguridad
-
-<!-- TODO: Diferencia entre maquina virtual y CLR -->
 
 #### Dynamic Language Rutime (DLR)
 
