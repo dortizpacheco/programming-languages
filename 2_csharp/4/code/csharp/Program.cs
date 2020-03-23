@@ -1,4 +1,5 @@
 ﻿using BasicDSL;
+using DynamicDSL;
 
 namespace CSharp
 {
@@ -7,6 +8,7 @@ namespace CSharp
         static void Main(string[] args)
         {
             BasicDSLTests.Run();
+            DynamicDSLTests.Run();
         }
     }
 }
