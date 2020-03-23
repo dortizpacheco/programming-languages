@@ -5,86 +5,49 @@
 <!-- TODO: Cambiar los ejemplos a DSL de Persona -->
 
 Supongamos la siguiente situación. Se quiere implementar un mecanismo
-para crear maquinas de estado. A estas maquinas de estado debe ser
-posible añadirles transiciones, entre estados, los cuales, seran
-representados mediante _strings_. Una posible implementación para esto es
-la siguiente:
+para crear objetos de tipo _persona_. A estas _personas_ debe ser
+posible modificarles su _nombre_ y _apellido_. Una posible implementación
+para esto es la siguiente:
 
 ```csharp
-class StateMachine
+class Person
 {
-    private List<Transition> transitions;
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 
-    public StateMachine()
+    public StateMachine(string firstName, string lastName)
     {
-        this.transitions = new List<Transition>();
-    }
-
-    public AddTransition(Transition transition)
-    {
-        this.transitions.Add(transition);
-    }
-}
-
-class Transition
-{
-    public string Origin { get; private set; }
-    public string Dest { get; private set; }
-
-    public Transition(string origin, string dest)
-    {
-        this.Origin = origin;
-        this.Dest = dest;
+        this.FirstName = firstName;
+        this.LastName = lastName;
     }
 }
 ```
 
-Luego podría crearse una máquina de estado de la siguiente manera:
+Luego podría crearse una persona de la siguiente manera:
 
 ```csharp
-var machine = new StateMachine();
-machine.AddTransition(new Transition("a", "b"))
-machine.AddTransition(new Transition("b", "c"))
+var person = new Person("Jorge", "Mederos");
 ```
 
 Lo anterior resuelve nuestro problema, pero que tal si quisieramos una manera mas
-expresiva de expresar lo anterior.
+expresiva.
+
+> Si el ejemplo siguiente es o no una manera mas expresiva, es algo subjetivo
+> y que por supuesto para algo tan sencillo puede no marcar la diferencia
 
 ```csharp
-class StateMachine
+static class PersonExtensions
 {
-    private List<Transition> transitions;
-    private Transition newTransition;
-
-    public StateMachine()
+    public static Person FirstName(this Person person, string firstName)
     {
-        this.transitions = new List<Transition>();
-        this.newTransition = null;
+        person.FirstName = firstName;
+        return person;
     }
 
-    public Transition Transition()
+    public static Person LastName(this Person person, string lastName)
     {
-        this.newTransition = new Transition();
-        this.Transitions.Add(this.newTransition);
-        return this.newTransition;
-    }
-}
-
-class Transition
-{
-    public string Origin { get; private set; }
-    public string Dest { get; private set; }
-
-    public Transition From(string origin)
-    {
-        this.Origin = origin;
-        return this;
-    }
-
-    public Transition To(string dest)
-    {
-        this.Dest = dest;
-        return this;
+        person.LastName = lastName;
+        return person;
     }
 }
 ```
@@ -92,9 +55,9 @@ class Transition
 Esto nos permitiria hacer lo siguiente:
 
 ```csharp
-var machine = new StateMachine();
-machine.Transition().From("a").To("b")
-machine.Transition().From("b").To("c")
+var person = new Person()
+            .FirstName("Jorge")
+            .LastName("Mederos")
 ```
 
 Lo que hemos hecho anteriormente es utilizar un **_DSL_** para representar nuestro
@@ -136,13 +99,13 @@ Analicemos la definicion anterior:
 **¿Que tal si tuvieramos lo siguiente en un archivo externo a la aplicación?**
 
 ```
-state-machine:
-    a -> b
-    b -> c
+person:
+    first-name: "Jorge"
+    last-name: "Mederos"
 ```
 
 Esta claro que es posible leer el contenido de este archivo y luego de un proceso de
-_parsing_ convertirlo en una instancia de `StateMachine`. En este caso tambien
+_parsing_ convertirlo en una instancia de `Person`. En este caso tambien
 estaríamos en presencia de un **_DSL_**. Solo que este estaria ubicado en un archivo
 externo a la aplicación principal.
 
@@ -185,7 +148,7 @@ listar los metodos que esta contiene y documentarlos uno a uno, estos metodos
 tienen que tener sentido por si solos, ser _autocontenidos_; por otro lado en
 un **DSL interno** podria pensarse en los metodos como palabras de un
 lenguaje que no expresan una idea hasta que no son compuestas en oraciones.
-Por ejemplo metodos `transition(event)` o `to(dest)` no tendrian sentido por
+Por ejemplo metodos `transition(event)` o `to(dest)` - correspondientes a la creación de una maquina de estado - no tendrian sentido por
 si solo en una _api clasica_, pero pueden ser utilizados en un **DSL interno**
 de la siguiente manera `.transition(event).to(dest)`. Es común
 tambien destinguir los **DSLs internos** por la no utilizacion de
