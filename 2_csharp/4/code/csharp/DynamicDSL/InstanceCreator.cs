@@ -1,4 +1,4 @@
-namespace DynamicDSL
+namespace CSharp.DynamicDSL
 {
     class InstanceCreator
     {

@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace CSharp.DynamicDSL
+namespace CSharp.DynamicReflectionDSL
 {
     class Person : DynamicObject
     {
@@ -50,7 +51,7 @@ namespace CSharp.DynamicDSL
             var result = "{\n";
             foreach (var item in this.fields)
                 result += string.Format("  {0}: {1}\n", item.Key, item.Value);
-            return result + "}";
+            return result + "}\n";
         }
     }
 }

@@ -1,9 +1,9 @@
-namespace CSharp.BasicDSL
+namespace CSharp.DynamicReflectionDSL
 {
     class Factory
     {
         private static InstanceCreator creator = new InstanceCreator();
-        public static InstanceCreator New
+        public static dynamic New
         {
             get
             {

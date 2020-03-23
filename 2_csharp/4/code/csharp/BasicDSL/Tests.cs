@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace DynamicDSL
+namespace CSharp.BasicDSL
 {
-    class DynamicDSLTests
+    class Tests
     {
         public static void Run()
         {

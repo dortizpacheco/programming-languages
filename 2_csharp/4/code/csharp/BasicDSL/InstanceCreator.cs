@@ -1,4 +1,4 @@
-namespace BasicDSL
+namespace CSharp.BasicDSL
 {
     class InstanceCreator
     {

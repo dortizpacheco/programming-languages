@@ -1,6 +1,6 @@
 using System;
 
-namespace BasicDSL
+namespace CSharp.BasicDSL
 {
     class Person
     {
