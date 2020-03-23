@@ -976,4 +976,132 @@ excepción.
 
 ## Reflection
 
-<!-- TODO: Añandir una pequeña explicacion de Reflection en CSharp -->
+_Reflection_ es la capacidad de un proceso de examinar, introspectar y modificar su
+propia estructura y comportamiento. Reflection ayuda a los programadores a crear
+bibliotecas de software genéricas para mostrar datos, procesar diferentes formatos
+de datos, realizar la serialización o deserialización de datos para la
+comunicación, o agrupar y desagrupar datos para contenedores o ráfagas de
+comunicación. _Reflection_ hace que un lenguaje sea más adecuado para el código
+orientado a la red.
+
+Tambien se puede utilizar para observar y modificar la ejecución del programa en
+tiempo de ejecución. Esto generalmente se logra mediante la asignación dinámica de
+código de programa en tiempo de ejecución. En lenguajes de programación orientados
+a objetos, esta técnica permite la inspección de clases, interfaces, campos y
+métodos en tiempo de ejecución sin conocer los nombres de las interfaces, campos y
+métodos en tiempo de compilación. También permite la creación de instancias de
+nuevos objetos y la invocación de métodos. Por lo antes dicho es claro que es
+también una estrategia clave para la metaprogramación .
+
+### Reflection en C
+
+_Reflection_ en C# tiene como clase principal `System.Type`; clase abstracta que
+representa un tipo en el _Common Type System (CTS)_ lo cual representa una de las
+principales componentes de _CLR_. Cuando utiliza esta clase, puede encontrar los
+tipos utilizados en un módulo y un espacio de nombres y también determinar si un
+tipo dado es una referencia o un tipo de valor. Puede analizar las tablas de
+metadatos (Campos, Propiedades, Métodos, Eventos) correspondientes para ver estos
+elementos
+
+El enlace tardío también se pueden lograr a través de _Reflection_. Un ejemplo
+claro: es posible que no se sepa qué assembly cargar durante el tiempo de
+compilación. En este caso, puede pedirle al usuario que ingrese el nombre y el tipo
+del ensamblado durante el tiempo de ejecución para que la aplicación pueda cargar
+el assembly apropiado. Con el tipo `System.Reflection.Assembly`, tiene algunos
+metodos estáticos que le permiten cargar un assembly directamente: `LoadFrom`,
+`LoadWithPartialName`
+
+Dentro del archivo PE (ejecutable portátil) hay principalmente metadatos, que
+contienen una variedad de tablas diferentes, como:
+
+- Tabla de definición archivada
+- Tabla de definición de tipo
+- Tabla de definición de método
+
+### Api se `System.Reflection`
+
+Para realizar la manipulación de una instacia de un objeto en _C#_ mediante
+_Reflection_ se necesita comenzar obteniendo la clase `System.Type` que describe
+dicha instancia, `System.Type` es la puerta principal para el uso de _Reflection_
+en _C#_. Para abrir esta puerta _C#_ nos brindan tres formas principales:
+
+- `typeof`
+
+```csharp
+  Type t = typeof(Person);
+```
+
+- `object.GetType()`
+
+```csharp
+  var person = new Person();
+  Type t = person.GetType();
+```
+
+- `Type.GetType()`
+
+```csharp
+  Type t = Type.GetType("CSharp.DynamicReflectionDSL.Person");
+```
+
+Aunque las formas antes descritas dependen de conocer la tipo del objeto que
+queremos modificar de antemano. Para superar esta limitacion dentro de
+`System.Reflection` tenemos también la clase `Assambly` la cual contiene el metodo
+estático `GetExecutingAssembly()` que retorna una instancia del ensamblado que se
+encuentra en ejecución. El cual contiene todos lo tipos en el interior del mismo y
+por tanto se puede realizar una busqueda entre estos tipos:
+
+```csharp
+  Type[] classes = Assembly.GetExecutingAssembly().GetTypes();
+  foreach (var type in classes)
+    if (type.Name == "Nombre del objeto") {....}
+```
+
+Una vez ya se tiene la instancia de `System.Type` necesaria, la misma contienen una
+serie de metodos para interactuar con las clases de `System.Reflection` entre los
+cuales resaltamos:
+
+- `GetEvent` y `GetEvents` los cuales retornan los `EventInfo` de la instancia.
+- `GetField` y `GetFields` los cuales retornan los `FieldInfo` de la instancia.
+- `GetMember` y `GetMembers` los cuales retornan los `MemberInfo` de la instancia.
+- `GetProperty` y `GetPropertys` los cuales retornan los `PropertyInfo`
+  de la instancia.
+- `GetMethod` y `GetMethods` los cuales retornan los `MethodInfo` de la instancia.
+- `GetEvent` y `GetEvents` los cuales retornan los `EventInfo` de la instancia.
+- `GetConstructorInfo` y `GetConstructorInfos` los cuales retornan los
+  `ConstructorInfo` de la instancia.
+
+Una vez se alcanzan estas clases de `System.Reflection` solo necesitamos conocer
+sobre cada uno de ellos para poder usar sus distintos métodos para indagar y
+modificar sus metadatos. A continuación se expone la descripción de algunos de
+ellos:
+
+- `EventInfo` : clase abstracta. Contiene información sobre un evento específico.
+- `FieldInfo` : clase abstracta. Puede contener información sobre los miembros de
+  datos especificados de la clase.
+- `MemberInfo`: clase abstracta. Contiene información de comportamiento general
+  para clase EventInfo , FieldInfo , MethodInfo y PropertyInfo .
+- `MethodInfo` : clase abstracta. Contiene información sobre el método especificado.
+- `ParameterInfo` : clase abstracta. Contiene información sobre un parámetro dado
+  en un método dado.
+- `PropertyInfo` : clase abstracta. Contiene información sobre la propiedad
+  especificada.
+- `ConstructorInfo`: clase abstracta. Contiene datos sobre los parámetros,
+  modificadores de acceso y detalles de implementación de un constructor.
+
+Cada uno de ellos tienen distintos métodos para acceder a los metadatos de manera
+diferente y de acuerdo con sus respectivos significados. En particular
+ejemplificamos el caso de `PropertyInfo`:
+
+```csharp
+    ...
+    var person = new Person();
+    person.LastName = "Name"
+    PropertyInfo info = .GetProperty("LastName");
+    info.GetType(); //System.Reflection.PropertyInfo
+    a.GetValue(person); //Name
+    a.SetValue(person,"NewName");//person.LastName = "NewName"
+    a.Name;//LastName
+    a.PropertyType; //string
+    ...
+```
