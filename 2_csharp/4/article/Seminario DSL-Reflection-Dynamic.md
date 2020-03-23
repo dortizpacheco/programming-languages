@@ -279,7 +279,7 @@ modelo que provee la funcionalidad.
 
 ### Ventajas y Desventajas de los DSL:
 
-**Un _DSL_ tiene, entre otras, las siguientes evntajas:**
+**Un _DSL_ tiene, entre otras, las siguientes ventajas:**
 
 - **Aumento de la productividad:**  
   Menos bugs, más fácil de encontrarlos. Menos duplicación de código, gracias
@@ -586,7 +586,12 @@ Para entender que es el **_DLR_** debemos entender primero que es el **_CLR_**.
 
 #### Common Language Rutime (CLR)
 
-El _Common Language Runtime_ o _CLR_ es un entorno de ejecución para los códigos de los programas que corren sobre la plataforma _Microsoft .NET_. El _CLR_ es el encargado de compilar una forma de código intermedio (el conocido _IL_) a código de maquina nativo, mediante un compilador en tiempo de ejecución. No debe confundirse el _CLR_ con una máquina virtual, ya que una vez que el código está compilado, corre nativamente sin intervención de una capa de abstracción sobre el hardware subyacente.
+El _Common Language Runtime_ o _CLR_ es un entorno de ejecución para los códigos de
+los programas que corren sobre la plataforma _Microsoft .NET_. El _CLR_ es el
+encargado de compilar una forma de código intermedio (el conocido _IL_) a código de
+maquina nativo, mediante un compilador en tiempo de ejecución. No debe confundirse
+el _CLR_ con una máquina virtual, ya que una vez que el código está compilado, corre
+nativamente sin intervención de una capa de abstracción sobre el hardware subyacente.
 
 La manera en que la máquina virtual se relaciona con el _CLR_ permite a los
 programadores ignorar muchos detalles específicos del microprocesador que estará
