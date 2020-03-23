@@ -101,6 +101,8 @@ concatenada que mantienen estrecha relación entre sí, se les llama _Fluent API
 que permiten una manera fluida de escribir el código, dando la sensación de ser un
 lenguaje diferente.
 
+<!-- TODO: Hablar mas de Fluent Api, maneras de implementarla (metodos extensores, etc.) -->
+
 > Un **_DSL_** es un lenguaje de programacion de expresividad limitada, enfocado a un
 > dominio especifico.
 
@@ -268,7 +270,8 @@ Es posible obtener las ventajas que nos brinda la existencia de un
 _modelo semántico_ en un **_DSL_** _interno_. Para ello necesitamos separar
 la capa del lenguaje de la capa del modelo, es aquí donde entran a jugar un papel
 fundamental los _Expression Builders_, basicamente tendremos una capa en nuestro
-modelo que proveerá el lenguaje y construir de la manera debida la instancia del modelo que provee la funcionalidad.
+modelo que proveerá el lenguaje y construir de la manera debida la instancia del
+modelo que provee la funcionalidad.
 
 <!-- TODO: Ejemplo de Expression Builder -->
 
@@ -311,18 +314,36 @@ modelo que proveerá el lenguaje y construir de la manera debida la instancia de
 
 ## Dynamic
 
-### dynamic keyword
+¿Qué tal si queremos un mayor dinamismo en nuestro _DSL_?
 
-Cuando usa la palabra clave dynamic para interactuar con una instancia de un objeto, se le esta haciendo saber al complilador que
-a esta instancia hay que un enlace tardio(Late binding) y que el DLR se encarge del manejo de este objeto. La interfaz IDynamicMetaObjectProvider se puede hacer que una clase tome el control de su comportamiento de enlace tardío.
-Cuando utiliza la dynamic palabra clave para interactuar con una clase que implementa IDynamicMetaObjectProvider, el DLR llama a los métodos del IDynamicMetaObjectProvider los cuales deben describir el comportamiento de dicha clase bajo un enlace tardío.
+> Vease el codigo adjunto:  
+> Implementacion en CSharp -> Carpeta DynamicDSl -> Clase Person
 
-### DLR?
+A continuación se explica como es posible lograr esto.
 
-#### CLR or Common Language Rutime
+### Palabra clave `dynamic`
 
-El Common Language Runtime o CLR es un entorno de ejecución para los códigos de los programas que corren sobre la plataforma Microsoft .NET. El CLR es el encargado de compilar una forma de código intermedio (el conocido IL) a código de maquina nativo, mediante un compilador en tiempo de ejecución. No debe confundirse el CLR con una máquina virtual, ya que una vez que el código está compilado, corre nativamente sin intervención de una capa de abstracción sobre el hardware subyacente.
-La manera en que la máquina virtual se relaciona con el CLR permite a los programadores ignorar muchos detalles específicos del microprocesador que estará ejecutando el programa. El CLR también permite otros servicios importantes, incluyendo los siguientes:
+La palabra clave `dynamic` es utilizada para indicar que una instancia esta
+involucrada en un _**enlace tardío** (Late Binding)_ y que el **_DLR_** o
+_Dynamic Language Runtime_ se encargue del manejo de este objeto. El
+comportamiento de este objeto durante el _enlace tardío_ puede ser controlado y
+sobreescrito a traves de la implementación de la interfaz
+`IDynamicMetaObjectProvider`, el **_DLR_** se encargará de llamar a los métodos
+provenientes de `IDynamicMetaObjectProvider`, los cuales describen el comportamiento
+de la clase en el momento de enlace.
+
+### ¿Qué es el DLR?
+
+Para entender que es el **_DLR_** debemos entender primero que es el **_CLR_**.
+
+#### Common Language Rutime (CLR)
+
+El _Common Language Runtime_ o _CLR_ es un entorno de ejecución para los códigos de los programas que corren sobre la plataforma _Microsoft .NET_. El _CLR_ es el encargado de compilar una forma de código intermedio (el conocido _IL_) a código de maquina nativo, mediante un compilador en tiempo de ejecución. No debe confundirse el _CLR_ con una máquina virtual, ya que una vez que el código está compilado, corre nativamente sin intervención de una capa de abstracción sobre el hardware subyacente.
+
+La manera en que la máquina virtual se relaciona con el _CLR_ permite a los
+programadores ignorar muchos detalles específicos del microprocesador que estará
+ejecutando el programa. El _CLR_ también permite otros servicios importantes,
+incluyendo los siguientes:
 
 - Administración de la memoria
 - Administración de hilos
@@ -330,92 +351,197 @@ La manera en que la máquina virtual se relaciona con el CLR permite a los progr
 - Recolección de basura
 - Seguridad
 
-#### DLR or Dynamic Language Rutime
+<!-- TODO: Diferencia entre maquina virtual y CLR -->
 
-El DLR (dynamic language rutime) agrega un conjunto de servicios al CLR para un mejor soporte de lenguajes dinámicos. Estos servicios incluyen lo siguiente:
+#### Dynamic Language Rutime (DLR)
 
-- Árboles de expresión. El DLR usa árboles de expresión para representar la semántica del lenguaje. Para este propósito, el DLR ha ampliado los árboles de expresión LINQ para incluir el flujo de control, la asignación y otros nodos de modelado de lenguaje.
-- Interaccion y almacenamiento en caché. Mediante el dynamic call site, en un lugar en el código donde realiza una operación como a + b o a.b() en objetos dinámicos. El DLR almacena en caché las características a y b (generalmente los tipos de estos objetos) e información sobre la operación. Si dicha operación se ha realizado previamente, el DLR recupera toda la información necesaria de la memoria caché para un envío rápido.
-- Interoperabilidad dinámica de objetos. El DLR proporciona un conjunto de clases e interfaces que representan objetos y operaciones dinámicos y pueden ser utilizados por implementadores de lenguaje y autores de bibliotecas dinámicas. Estas clases e interfaces incluyen IDynamicMetaObjectProvider , DynamicMetaObject , DynamicObject y ExpandoObject.
+El _Dynamic Language Rutime_ o _DLR_ agrega un conjunto de servicios al _CLR_ para
+un mejor soporte de lenguajes dinámicos. Estos servicios incluyen lo siguiente:
 
-### Late binding?
+- **Árboles de expresión:**  
+  El _DLR_ utiliza árboles de expresión para representar la semántica del lenguaje.
+  Para este propósito, el _DLR_ ha ampliado los árboles de expresión _LINQ_ para
+  incluir el control de flujo, la asignación y otros nodos para modelar el lenguaje.
+- **Interaccion y almacenamiento en caché:**  
+  Mediante el dynamic call site, en un lugar en el código donde realiza una
+  operación como `a + b` o `a.B()` en objetos dinámicos. El DLR almacena en caché
+  las características `a` y `b` (generalmente los tipos de estos objetos) e
+  información sobre la operación. Si dicha operación se ha realizado previamente, el
+  DLR recupera toda la información necesaria de la memoria caché para un envío
+  rápido.
+- **Interoperabilidad dinámica de objetos**:  
+  El DLR proporciona un conjunto de clases e interfaces que representan objetos y
+  operaciones dinámicos y pueden ser utilizados por implementadores de lenguaje y
+  autores de bibliotecas dinámicas. Estas clases e interfaces incluyen
+  `IDynamicMetaObjectProvider`, `DynamicMetaObject`, `DynamicObject` y
+  `ExpandoObject`.
 
-#### Termino enlace
+### Enlace Tardío (Late binding)
 
-    Se le denomina enlace a la asociación de una función con su objeto correspondiente objeto al momento del llamado de la misma.
+**_Enlace:_** se le denomina a la asociación de una función con su objeto
+correspondiente al momento de llamado de la misma.
 
-#### enlace de tiempo de compilación, estatico o temprano
+**_Enlace de tiempo de compilación, estático o temprano:_** es el de una función
+miembro, que se llama dentro de un objeto, dicho enlace se resuelve en tiempo de
+compilación. Todos los métodos que pertenecen a un objeto o nombre de una clase
+(estáticos) son a los que se pueden realizar enlaze de tiempo de compilación.
 
-    EL enlace temprano es el de una función miembro, que se llama dentro de un objeto dicho enlace se resuelve en tiempo de compilacion. Todos los métodos que pertenecen a un objeto o nombre de una clase (staticos) son a los que se pueden realizar enlaze de tiempo de compilación
+**_Enlace tardío o dinámico:_** es cuando solo se puede saber a que objeto pertenece
+una función, en tiempo de ejecución. Uno de los ejemplos más comunes de este tipo
+enlace son los metodos virtuales.
 
-#### enlace tardío o dinamico
+#### Enlace tardío con métodos dinámicos vs. métodos virtuales en CSharp
 
-    El enlace tardío es cuando solo se pueder a que objeto A pertenece la función B en el tiempo de ejecución. Uno de los ejemplos mas comunes de este enlace son los metodos virtuales.
+Los métodos virtuales todavía están "_vinculados_" en tiempo de compilación.
+El compilador verifica la existencia real del método y su tipo de retorno, y el
+fallará en compilar si el método no existe o existe alguna inconsistencia de tipos.
 
-#### Enlace tardío con métodos dinámicos vs. virtuales en C
+El método virtual permite el polimorfismo y una forma de enlace tardío, ya que el
+método se enlaza al tipo adecuado en tiempo de ejecución, a través de la tabla de
+métodos virtuales.
 
-Los métodos virtuales todavía están "vinculados" en tiempo de compilación. El compilador verifica la existencia real del metodo y su tipo de retorno, y el compilador fallará al compilar si el método no existe o existe inconsistencia de tipos.
-El método virtual permite el polimorfismo y una forma de enlace tardío, ya que hace que el método se enlaza al tipo adecuado en tiempo de ejecución a través de la tabla de métodos virtuales.
-Dynamic es un animal diferente: con Dynamic, no hay absolutamente ningún enlace en el momento de la compilación. El método puede o no existir en el objeto de destino, y eso se determinará en tiempo de ejecución.
-Todo es una cuestión de terminología: la dinámica es realmente un enlace tardío (búsqueda del método de tiempo de ejecución), mientras que virtual proporciona el envío del método de tiempo de ejecución a través de una búsqueda vitual, pero todavía tiene algún "enlace temprano" en su interior.
+Por otro lado, con `dynamic`, no hay absolutamente ningún enlace en el momento de
+compilación. El método puede o no existir en el objeto destino, y eso se
+determinará en tiempo de ejecución.
 
-### Como se logra el comportamiento dinamico en C
+Todo es una cuestión de terminología, `dynamic` es realmente un enlace tardío
+(búsqueda del método de tiempo de ejecución), mientras que `virtual` proporciona el
+envío del método de tiempo de ejecución a través de una búsqueda virtual, pero
+todavía tiene algún "_enlace temprano_" en su interior.
 
-Este comportamiento es concecuencia directa del desarrolo del DLR el cual fue concebido para admitir las implementaciones "Iron" de los lenguajes de programación Python y Ruby en .NET Framework.
-En en centro del entorno de ejecución DLR se posiciona la clase llamada DynamicMetaObject. Dicha clase implemeta los siguientes metodos para dar respuesta a como actuar en todos los posibles esenarios en los que se puede encontrar una instancia de un objecto en un momento dado:
+### Como se logra el comportamiento dinámico en CSharp
 
-- BindCreateInstance: crea o activa un objeto
-- BindInvokeMember: llamar a un método encapsulado
-- BindInvoke: ejecuta el objeto (como una función)
-- BindGetMember: obtenga un valor de propiedad
-- BindSetMember: establece un valor de propiedad
-- BindDeleteMember: eliminar un miembro
-- BindGetIndex: get el valor en un índice específico
-- BindSetIndex: establece el valor en un índice específico
-- BindDeleteIndex: elimina el valor en un índice específico
-- BindConvert: convierte un objeto a otro tipo
-- BindBinaryOperation: invoque un operador binario en dos operandos suministrados
-- BindUnaryOperation: invoque un operador unario en un operando suministrado
+Este comportamiento es concecuencia directa del desarrolo del _DLR_ el cual fue
+concebido para admitir las implementaciones _"Iron"_ de los lenguajes de programación
+_Python_ y _Ruby_ en _.NET_.
 
-De manera general las clases definidas de manera ordinaria (estatica) saben como reacionar en dichos esenarios.
-Pero las clases dinamicas no tiene estas reaciones predefinidas por lo cual es necesario predefinir par estas clases su propio DynamicMetaObject el cual en tiempo de ejecucion sepa que tiene que ejecutar en cada esenario.
-Para definir una clase dinamica System.Dynamic proveé la interfaz IDynamicMetaObjectProvider el cual contiene el metodo:
+En en centro del entorno de ejecución _DLR_ se posiciona la clase
+llamada DynamicMetaObject. Dicha clase implemeta los siguientes métodos para dar
+respuesta a como actuar en todos los posibles esenarios en los que se puede
+encontrar una instancia de un objecto en un momento dado:
 
-        DynamicMetaObject GetMetaObject(Expression parameter)
+- `BindCreateInstance`: crea o activa un objeto.
+- `BindInvokeMember`: llamar a un método encapsulado.
+- `BindInvoke`: ejecuta el objeto (como una función).
+- `BindGetMember`: obtenga un valor de propiedad.
+- `BindSetMember`: establece un valor de propiedad.
+- `BindDeleteMember`: eliminar un miembro.
+- `BindGetIndex`: obtener el valor en un índice específico.
+- `BindSetIndex`: establece el valor en un índice específico.
+- `BindDeleteIndex`: elimina el valor en un índice específico.
+- `BindConvert`: convierte un objeto a otro tipo.
+- `BindBinaryOperation`: invoque un operador binario en dos operandos suministrados.
+- `BindUnaryOperation`: invoque un operador unario en un operando suministrado.
 
-El cual debe encargarse de retornar el DynamicMetaObject que describa el comportamiento de la clase dinamica que implemeta la interfaz IDynamicMetaObjectProvider según el árbol de expresiones que dicho método recive como parámetro
+De manera general las clases definidas de manera ordinaria (estática) saben como
+reaccionar en dichos esenarios. Pero las clases _dinámicas_ no tienen estas
+reacciones predefinidas por lo cual es necesario predefinir para estas clases su
+propio `DynamicMetaObject`, el cual en tiempo de ejecución sepa que tiene que
+ejecutar en cada esenario. Para definir una clase _dinámica_, `System.Dynamic`
+proveé la interfaz `IDynamicMetaObjectProvider`, la cual contiene el metodo:
 
-### System.Dynamic.DynamicObject
+```csharp
+DynamicMetaObject GetMetaObject(Expression parameter)
+```
 
-Como anteriormente se puede observar en principio lograr un comportamieto dinámico en C# pasa por crear estos DynamicMetaObject y tener conocimientos para trabajar sobre el árbol de expresiones de C#. Para evitar todo este proceso System.Dynamic proveé la clase DynamicObject, pensada para poder definir comportamietos dinamicos abstraidos de todo el proceso anteriormente descrito pues ya cuenta un una implemetacion del metodo GetMetObject de IDynamicMetaObjectProvider. Dicha imlpemetacion relaciona los siguentes metodos a sus respectivos esenarios:
+El cual debe encargarse de retornar el `DynamicMetaObject` que describa el
+comportamiento de la clase _dinamica_ que implemeta la interfaz
+`IDynamicMetaObjectProvider` según el árbol de expresiones que dicho método recibe
+como parámetro
 
-        public virtual bool TryBinaryOperation(BinaryOperationBinder binder, object arg, out object result)
+### `System.Dynamic.DynamicObject`
 
-Proporciona implementación para operaciones binarias. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones como la suma, multiplicación, etc. La clase BinaryOperationBinder
-contiene una ExpressionType con información de la operación en se realiza al momento de llamado de esta función. Este metodo considera que la instancia de la clase derivada de DynamicObject es el operador de la derecha y arg es el de la izq.
+Como se puede observar, en principio lograr un comportamieto dinámico en **C#** pasa
+por crear estos `DynamicMetaObject` y tener conocimientos para trabajar sobre el
+árbol de expresiones de **C#**. Para evitar todo este proceso `System.Dynamic`
+provée la clase `DynamicObject`, pensada para poder definir comportamietos dinámicos
+abstraídos de todo el proceso anteriormente descrito pues ya cuenta con una
+implemetacion del metodo `GetMetaObject` de `IDynamicMetaObjectProvider`. Dicha
+imlpemetación relaciona los siguentes métodos a sus respectivos esenarios:
 
-public virtual bool TryConvert(ConvertBinder binder, out object result)
+- ```csharp
+  public virtual bool TryBinaryOperation(BinaryOperationBinder binder, object arg, out object result);
+  ```
 
-Proporciona implementación para operaciones de conversión de tipos. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico de las operaciones que convierten un objeto de un tipo a otro. La clase ConvertBinder contiene información sobre del tipo al cual se esta tratando de hacer la converción e incluso contiene informacion sobre si el proceso es explícito o implícito
+  Proporciona implementación para operaciones binarias. Las clases derivadas de la
+  clase `DynamicObject` pueden sobreescribir este método para especificar el
+  comportamiento dinámico para operaciones como la suma, multiplicación, etc. La
+  clase BinaryOperationBinder contiene una `ExpressionType` con información de la
+  operación que se realiza en el momento de llamado de esta función. Este método
+  considera que la instancia de la clase derivada de `DynamicObject` es el operador
+  de la derecha y _arg_ es el de la izq.
 
-public virtual bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
-public virtual bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
+- ```csharp
+  public virtual bool TryConvert(ConvertBinder binder, out object result);
+  ```
 
-Proporciona la implementación para operaciones que obtienen(establecen) valores de miembros por índices. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones tales como obtener (acceden) un valor para una propiedad mediante unos índices específico.
+  Proporciona implementación para operaciones de conversión de tipos. Las clases
+  derivadas de la clase `DynamicObject` pueden sobreescribir este método para
+  especificar el comportamiento dinámico de las operaciones que convierten un objeto
+  de un tipo a otro. La clase `ConvertBinder` contiene información sobre del tipo al
+  cual se esta tratando de hacer la conversión e incluso contiene información sobre
+  si el proceso es explícito o implícito.
 
-        public virtual bool TryGetMember(GetMemberBinder binder, out object result)
-        public virtual bool TrySetMember(SetMemberBinder binder, object value)
+- ```csharp
+  public virtual bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result);
+  public virtual bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value);
+  ```
 
-Proporciona la implementación para operaciones que obtienen (establecen) valores de miembros. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones tales como obtener (establecer) un valor para una propiedad. La clase GetMemberBinder (SetMemberBinder) contiene infoemacion sobre el nombre de la preopiedad en cuestión.
+  Proporciona la implementación para operaciones que obtienen (establecen) valores
+  de miembros por índices. Las clases derivadas de la clase `DynamicObject` pueden
+  sobreescribir este método para especificar el comportamiento dinámico para
+  operaciones tales como obtener (establecer) un valor para una propiedad mediante
+  unos índices específico.
 
-        public virtual bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+- ```csharp
+  public virtual bool TryGetMember(GetMemberBinder binder, out object result);
+  public virtual bool TrySetMember(SetMemberBinder binder, object value);
+  ```
 
-Proporciona la implementación para operaciones que invocan a un miembro. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones como llamar a un método. La clase InvokeMemberBinder contiene infoemacion sobre el nombre de la miembro en cuestión y args es un array con los parámetros.
+  Proporciona la implementación para operaciones que obtienen (establecen) valores
+  de miembros. Las clases derivadas de la clase `DynamicObject` pueden sobreescribir
+  este método para especificar el comportamiento dinámico para operaciones tales
+  como obtener (establecer) un valor de una propiedad. La clase `GetMemberBinder`
+  (`SetMemberBinder`) contiene información sobre el nombre de la propiedad en
+  cuestión.
 
-        public virtual bool TryInvoke(InvokeBinder binder, object[] args, out object result)
+- ```csharp
+  public virtual bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result);
+  ```
+  Proporciona la implementación para operaciones que invocan a un miembro. Las
+  clases derivadas de la clase `DynamicObject` pueden sobreescribir este método para
+  especificar el comportamiento dinámico para operaciones como llamar a un método.
+  La clase `InvokeMemberBinder` contiene información sobre el nombre del miembro en
+  cuestión y `args` es un array con los parámetros.
 
-Proporciona la implementación para operaciones que invocan un objeto. Las clases derivadas de la clase DynamicObject pueden anular este método para especificar el comportamiento dinámico para operaciones como invocar un objeto o un delegado. La clase InvokeBinder contiene informacion sobre la cantidad de argumentos y sus nombres mediante una propiedad del tipo CallInfo y args son los parámetros
+* ```csharp
+  public virtual bool TryInvoke(InvokeBinder binder, object[] args, out object result);
+  ```
+  Proporciona la implementación para operaciones que invocan un objeto. Las clases
+  derivadas de la clase `DynamicObject` pueden sobreescribir este método para
+  especificar el comportamiento dinámico para operaciones como invocar un objeto o
+  un delegado. La clase `InvokeBinder` contiene informacion sobre la cantidad de
+  argumentos y sus nombres mediante una propiedad del tipo `CallInfo` y `args` son
+  los parámetros.
 
-### System.Dynamic.ExpandoObject
+### `System.Dynamic.ExpandoObject`
 
-Aunque la clase DynamicObject es una gran abstración del proceso base, para su utilización es necesario implementar una clase que herede de el y realice los override necesarios lo cual es demasiado verboso en los casos más sencillos. Suponiendo que solo se necesita de un objeto dinámico que permita un control dinámico de propiedades, mediante DynamicObject necesitamos implementar los metodos TryGetMember y TrySetMember. Para evitar esto System.Dynamic proveé la clase ExpandoOject, la misma es una clase sealed y por tanto la misma no se puede extender. ExpandoObject implementa las interfaces IDictionary<KeyValuePair<string, object>> y IDynamicMetaObjectProvider entre otras. Mediante las dos interfaces antes mencionadas dicha clase logra el manejo dinámico de las propiedades. El proceso es realmente sencillo puesto que en su interios contiene algun tipo de implementacion de diccionario, al momento de asignar de una propiedad guarda el nombre de la propiedad como llave y el objeto que se le esta asignando como valor . Y en el momento en que se hace referencia a una propiedad busca si el nombre de dicha propiedad se encuentra entre las llaves, en caso afirmativo se devuelve el valor correspondiente de lo contrario se lanza un excepción
+Aunque la clase DynamicObject es una gran abstración del proceso base, para su
+utilización es necesario implementar una clase que herede de esta y realice los
+override necesarios, lo cual es demasiado verboso en los casos más sencillos.
+Suponiendo que solo se necesita de un objeto dinámico que permita un control
+dinámico de propiedades, mediante `DynamicObject` necesitamos implementar los
+metodos `TryGetMember` y `TrySetMember`. Para evitar esto `System.Dynamic` proveé la
+clase `ExpandoOject`, la misma es una clase `sealed` y por tanto no se puede
+extender.
+
+`ExpandoObject` implementa las interfaces
+`IDictionary<KeyValuePair<string, object>>` y `IDynamicMetaObjectProvider` entre
+otras. Mediante las dos interfaces antes mencionadas dicha clase logra el manejo
+dinámico de las propiedades. El proceso es realmente sencillo puesto que en su
+interior contiene algún tipo de implementación de diccionario, al momento de asignar
+una propiedad guarda el nombre de la propiedad como llave y el objeto que se le esta
+asignando como valor. Y en el momento en que se hace referencia a una propiedad
+busca si el nombre de dicha propiedad se encuentra entre las llaves, en caso
+afirmativo se devuelve el valor correspondiente, de lo contrario se lanza un
+excepción.
